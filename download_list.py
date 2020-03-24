@@ -11,6 +11,12 @@ import os
 import traceback
 from types import SimpleNamespace
 
+try:
+    import uvloop
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+except ImportError as e:
+    pass
+
 
 async def fetch(context, url, savepath):
     context.cur += 1
@@ -55,7 +61,7 @@ async def main():
         context.count = len(task_list)
         sem = asyncio.Semaphore(20)
         async with sem:
-            await asyncio.gather(*task_list)
+            await asyncio.wait(task_list)
 
 
 if __name__ == '__main__':
