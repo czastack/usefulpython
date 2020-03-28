@@ -20,20 +20,18 @@ except ImportError as e:
 
 async def fetch(context, url, savepath):
     context.cur += 1
-    print('download {:03d} / {:03d}'.format(context.cur, context.count))
+    print('download {} [{:03d} / {:03d}]'.format(savepath, context.cur, context.count))
 
     if os.path.exists(savepath):
         print(savepath, 'exists')
         return
 
-    timeout = aiohttp.ClientTimeout(total=2)
     try:
         print(f'start get: {url}')
-        async with context.session.get(url, timeout=timeout) as response:
+        async with context.session.get(url) as response:
             data = await response.read()
             async with aiofiles.open(savepath, 'wb') as f:
                 await f.write(data)
-
     except Exception as e:
         traceback.print_exc()
 
