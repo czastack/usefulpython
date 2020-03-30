@@ -51,10 +51,12 @@ async def main():
         task_list = []
         with open(args.src) as src_file:
             for line in src_file.readlines():
-                url, savepath = line.split()
-                if parent != '.':
-                    savepath = os.path.join(parent, savepath)
-                task_list.append(fetch(context, url, savepath))
+                line = line.strip()
+                if line and not line.startswith('#'):
+                    url, savepath = line.split()
+                    if parent != '.':
+                        savepath = os.path.join(parent, savepath)
+                    task_list.append(fetch(context, url, savepath))
 
         context.count = len(task_list)
         sem = asyncio.Semaphore(20)
@@ -63,4 +65,6 @@ async def main():
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    # asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
