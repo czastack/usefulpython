@@ -5,7 +5,7 @@
 
 import argparse
 import aiofiles
-import aiohttp
+import httpx
 import asyncio
 import os
 import traceback
@@ -28,19 +28,19 @@ async def fetch(context, url, savepath):
 
     try:
         print(f'start get: {url}')
-        async with context.session.get(url) as response:
-            data = await response.read()
-            async with aiofiles.open(savepath, 'wb') as f:
-                await f.write(data)
+        response = await context.client.get(url)
+        data = response.content
+        async with aiofiles.open(savepath, 'wb') as f:
+            await f.write(data)
     except Exception as e:
         traceback.print_exc()
 
 
 async def download_list(items, save_dir='.'):
     """下载列表"""
-    async with aiohttp.ClientSession() as session:
+    async with httpx.AsyncClient(http2=True) as client:
         context = SimpleNamespace(
-            session=session,
+            client=client,
             cur=0,
         )
         task_list = []
