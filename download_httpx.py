@@ -75,7 +75,7 @@ def main():
         for line in src_file.readlines():
             line = line.strip()
             if line and not line.startswith('#'):
-                url, savepath = line.split()
+                url, savepath = line.split(maxsplit=1)
                 items.append((url, savepath))
     # asyncio.run(main())
     loop = asyncio.get_event_loop()
